@@ -1,13 +1,45 @@
 <!DOCTYPE html>
-<html>
+<html lang="en-IN">
 <head>
     <title>Accessible Urban Navigation Demo</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap');
+        </style>
 </head>
 <body>
+    <!-- Search Container -->
+<div class="search-container">
+    <div class="search-box">
+        <input type="text" id="place-search" placeholder="Search for a place (e.g, Siliguri Government Polytechnic)">
+        <button type="submit" id="search-btn"><i class="fas fa-search"></i></button>
+    </div>
+</div>
+
+<!-- Navigation Controls -->
+<div class="control-buttons">
+    <!-- Directions Button -->
+    <div class="control-button" id="directions-btn">
+        <button class="main-button"><i class="fas fa-route"></i></button>
+        <div class="control-panel directions-panel">
+            <div class="input-group">
+                <input type="text" id="start-point" placeholder="Start point">
+                <button class="map-picker" title="Pick from map"><i class="fas fa-map-marker-alt"></i></button>
+                <button class="geolocate" title="Use my location"><i class="fas fa-location-arrow"></i></button>
+            </div>
+            <button class="swap-points"><i class="fas fa-exchange-alt"></i></button>
+            <div class="input-group">
+                <input type="text" id="end-point" placeholder="End point">
+                <button class="map-picker" title="Pick from map"><i class="fas fa-map-marker-alt"></i></button>
+            </div>
+            <button id="calculate-route" class="action-button">Calculate Route</button>
+        </div>
+    </div>
+    <!-- Add other buttons similarly later -->
+</div>
     <div class="map-container">
         <div id="map"></div>
     </div>
