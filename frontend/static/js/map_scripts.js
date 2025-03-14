@@ -1,8 +1,8 @@
-// Initialize map with NYC coordinates
+// Initialize map with Siliguri Coords
 const initialCoordinates = [26.704661, 88.445896];
 const map = L.map('map').setView(initialCoordinates, 17);
 
-// Add OpenStreetMap tiles
+// Add OSMF tiles
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     maxZoom: 19,
