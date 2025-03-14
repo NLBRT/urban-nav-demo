@@ -1,6 +1,6 @@
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: 'Figtree', sans-serif;
 }
 /* Search Container */
 .search-container {
@@ -14,32 +14,57 @@ body {
 }
 
 .search-box {
-    display: flex;
-    gap: 8px;
+    position: relative;
     width: 100%;
     height: 100%;
 }
 
 #place-search {
-    flex: 1;
-    padding: 16px;
-    background-color: #111;
+    width: 100%;
+    height: 100%;
+    padding: 0 32px 0 80px; /* Adjusted padding */
     border: 2px solid #222;
-    border-radius: 32px;
-    font-size: 16px;
-    color: #fff;
-    font-family: 'Helvetica Neue';
-    font-weight: 400;
+    border-radius: 40px;
     font-size: 1.25rem;
+    font-family: 'Figtree';
+    font-weight: 500;
+    color: #fff;
+    transition: all 0.3s ease;
+    background: #111;
+    text-align: center; /* Center text input */
 }
 
 #search-btn {
-    width: 64px;
+    position: absolute;
+    left: 16px; /* Changed from right to left */
+    top: 50%;
+    transform: translateY(-50%);
+    width: 56px;
+    height: 56px;
     border: none;
-    border-radius: 32px;
-    background: #007bff;
-    color: white;
+    background: none;
     cursor: pointer;
+    color: #fff;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    z-index: 2; /* Ensure button stays above input */
+}
+#search-btn:hover {
+    background: #ffffff11;
+}
+
+#search-btn:active {
+    transform: translateY(-50%) scale(0.9);
+}
+
+/* Focus states */
+#place-search:focus {
+    outline: none;
+    box-shadow: 0 0 0 8px #11111122;
 }
 
 /* Control Buttons */
@@ -61,12 +86,12 @@ body {
     border: none;
     border-radius: 50%;
     background: #111;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    color: #fff;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24px;
+    font-size: 2rem;
 }
 
 .control-panel {
@@ -89,38 +114,68 @@ body {
 }
 
 /* Directions Panel Specific Styles */
-.input-group {
-    position: relative;
-    margin-bottom: 12px;
+.input-group input {
+    width: 85%;
+    padding: 12px 40px 12px 16px;
+    border: 1px solid #333;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-family: 'Figtree';
+    font-weight: 400;
+    transition: all 0.3s ease;
     background-color: #222;
     color: #fff;
-    font-family: 'Helvetica Neue';
-    font-weight: 300;
 }
 
-.map-picker, .geolocate {
-    position: absolute;
+.input-group input:focus {
+    outline: none;
+    border-color: #fff;
+    background-color: #333;
+}
+
+/* Custom Placeholder Styling */
+.input-group input::placeholder {
+    color: #888;
+    opacity: 0.8;
+}
+
+/* Icon Buttons in Inputs */
+.input-group .map-picker,
+.input-group .geolocate {
+    right: 35px; /* Space for multiple buttons */
+    background: #f8f9fa;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background 0.2s ease;
+}
+
+.input-group .geolocate {
     right: 8px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    cursor: pointer;
 }
 
+.input-group .map-picker:hover,
+.input-group .geolocate:hover {
+    background: #e9ecef;
+}
+
+/* Swap Points Button */
 .swap-points {
-    margin: 12px 0;
-    background: none;
-    border: none;
-    cursor: pointer;
+    color: #fff;
+    background-color: #222;
+    font-size: 1rem;
+    padding: 10px;
+    border-radius: 50%;
 }
 
+.swap-points:hover {
+    background: #333;
+}
 .action-button {
     width: 100%;
     padding: 12px;
     background: #007bff;
-    font-family: 'Helvetica Neue';
-    font-weight: 500;
+    font-family: 'Figtree';
+    font-weight: 700;
     font-size: 1.25rem;
     color: white;
     border: none;
