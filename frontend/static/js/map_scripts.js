@@ -2,7 +2,100 @@
 let activePanel = null;
 let activePickerType = null;
 let mapClickHandler = null;
+let routeLayer = null;
 
+async function calculateRoute() {
+    const startInput = document.getElementById('start-point').value;
+    const endInput = document.getElementById('end-point').value;
+
+    try {
+        // Parse coordinates
+        const [startLat, startLng] = startInput.split(',').map(parseFloat);
+        const [endLat, endLng] = endInput.split(',').map(parseFloat);
+
+        // Request route from backend
+        const response = await fetch('http://localhost:5001/route', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                start_lat: startLat,
+                start_lng: startLng,
+                end_lat: endLat,
+                end_lng: endLng
+            })
+        });
+
+        const data = await response.json();
+        
+        if (data.status !== 'success') {
+            throw new Error(data.message);
+        }
+
+        // Clear previous route
+        if (routeLayer) {
+            map.removeLayer(routeLayer);
+        }
+
+        // Draw new route
+        routeLayer = L.polyline(data.route, {
+            color: '#6600cc',
+            weight: 6,
+            opacity: 0.67,
+            lineJoin: 'round'
+        }).addTo(map);
+
+        // Zoom to route
+        map.fitBounds(routeLayer.getBounds());
+
+    } catch (error) {
+        alert(`Routing failed: ${error.message}`);
+        console.error('Routing error:', error);
+    }
+}
+
+function drawRoute(coordinates) {
+    // Clear previous layers
+    if (routeLayer) {
+        routeLayer.remove()
+    }
+    
+    // Validate coordinates
+    if (coordinates.length < 2) {
+        alert('Route calculation failed: Insufficient points');
+        return;
+    }
+
+    // Create polyline with interpolation
+    routeLayer = L.polyline(coordinates, {
+        color: '#6600cc',
+        weight: 6,
+        opacity: 0.67,
+        lineJoin: 'round',
+        smoothFactor: 1
+    }).addTo(map);
+
+    // Add start/end markers
+    L.marker(coordinates[0], {
+        icon: L.icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41]
+        })
+    }).addTo(map).bindPopup('Start Point');
+
+    L.marker(coordinates[coordinates.length - 1], {
+        icon: L.icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41]
+        })
+    }).addTo(map).bindPopup('End Point');
+
+    // Zoom to route
+    map.fitBounds(routeLayer.getBounds());
+}
 
 const greenIcon = new L.Icon({
     iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
@@ -65,7 +158,7 @@ let endMarker = null;
 function handleMapClickForPoint(pointType) {
     return function(e) {
         const input = document.getElementById(`${pointType}-point`);
-        input.value = `${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)}`;
+        input.value = formatCoordinate(e.latlng.lat, e.latlng.lng);
         
         if (pointType === 'start') {
             if (startMarker) map.removeLayer(startMarker);

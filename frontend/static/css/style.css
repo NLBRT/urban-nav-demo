@@ -215,3 +215,11 @@ body {
         height: 100vh;
     }
 }
+
+.marker-pin {
+    width: 12px;
+    height: 12px;
+    background: #228B22;
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px rgba(34, 139, 34, 0.3);
+}

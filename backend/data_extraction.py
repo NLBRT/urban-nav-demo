@@ -24,37 +24,46 @@ def get_elevation(locations, batch_size=100):
     return elevations
 
 def process_osm_data(city="Siliguri, India"):
-    """Main processing function"""
     print("Downloading OSM data...")
-    
-    #OSMnx parameters
     G = ox.graph_from_place(
         city,
         network_type='walk',
-        custom_filter='["highway"~"footway|path|pedestrian|steps"]',
+        custom_filter='["highway"~"residential|living_street|service|footway|path|pedestrian|steps"]',
         retain_all=True
     )
+
+    # Add edge geometries
+    G = ox.add_edge_bearings(G)
+    G = ox.add_edge_speeds(G)
+    G = ox.add_edge_travel_times(G)
+
+    for node in G.nodes:
+        if 'x' not in G.nodes[node] or 'y' not in G.nodes[node]:
+            point = ox.projector.project_geometry(Point(G.nodes[node]['lon'], G.nodes[node]['lat']))[0]
+            G.nodes[node]['x'] = point.x
+            G.nodes[node]['y'] = point.y
+    
+    print("Projecting graph...")
+    G_projected = ox.project_graph(G, to_crs="EPSG:32618")
+
+    G_geo = ox.project_graph(G, to_crs="WGS84")
+    for node in G_projected.nodes():
+        G_projected.nodes[node]['lat'] = G_geo.nodes[node]['y']
+        G_projected.nodes[node]['lon'] = G_geo.nodes[node]['x']
     
     print("Processing nodes...")
-    nodes = ox.utils_graph.graph_to_gdfs(G, edges=False)
+    # CORRECTED: Use new method to get nodes/edges
+    nodes, edges = ox.graph_to_gdfs(G_projected)
     
     print("Fetching elevation data...")
-    locations = list(zip(nodes['y'], nodes['x']))  # (lat, lon) tuples
-    
+    locations = list(zip(nodes['y'], nodes['x']))
     nodes['elevation'] = get_elevation(locations)
     
-    for node_id, elevation in zip(nodes.index, nodes['elevation']):
-        G.nodes[node_id]['elevation'] = elevation
-    
-    print("Calculating slopes...")
-    G = ox.add_edge_grades(G)
-    
     print("Saving data...")
-    ox.save_graphml(G, filepath='./data/urban_nav_graph.graphml')
+    ox.save_graphml(G_projected, './data/urban_nav_graph.graphml')
     nodes.to_csv('./data/nodes_metadata.csv')
     
-    print(f"Completed processing {len(nodes)} nodes!")
-    return G
+    return G_projected
 
 if __name__ == "__main__":
     process_osm_data()
