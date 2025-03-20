@@ -158,6 +158,23 @@ body {
     background: #e9ecef;
 }
 
+.input-group.active-picking {
+    position: relative;
+    border: 2px solid #007bff !important;
+    border-radius: 8px;
+    background: rgba(0, 123, 255, 0.05);
+}
+
+.input-group.active-picking::after {
+    content: "Click on map to select point";
+    position: absolute;
+    bottom: -25px;
+    left: 0;
+    color: #007bff;
+    font-size: 0.9em;
+    white-space: nowrap;
+}
+
 /* Swap Points Button */
 .swap-points {
     color: #fff;

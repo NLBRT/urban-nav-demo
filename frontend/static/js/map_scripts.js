@@ -1,5 +1,8 @@
 // Initialize variables
 let activePanel = null;
+let activePickerType = null;
+let mapClickHandler = null;
+
 
 const greenIcon = new L.Icon({
     iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
@@ -77,10 +80,43 @@ function handleMapClickForPoint(pointType) {
 // Assign map pickers
 document.querySelectorAll('.map-picker').forEach(button => {
     button.addEventListener('click', function() {
-        const pointType = this.closest('.input-group').querySelector('input').id.split('-')[0];
-        map.on('click', handleMapClickForPoint(pointType));
+        // Remove any existing click handler
+        if (mapClickHandler) {
+            map.off('click', mapClickHandler);
+        }
+        
+        // Get which point type we're setting
+        const inputGroup = this.closest('.input-group');
+        activePickerType = inputGroup.querySelector('input').id.split('-')[0];
+        
+        // Add visual feedback
+        inputGroup.classList.add('active-picking');
+        
+        // Create new handler that self-destructs after use
+        mapClickHandler = function(e) {
+            const input = document.getElementById(`${activePickerType}-point`);
+            input.value = `${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)}`;
+            
+            // Update marker
+            if (activePickerType === 'start') {
+                if (startMarker) map.removeLayer(startMarker);
+                startMarker = L.marker(e.latlng, {icon: greenIcon}).addTo(map);
+            } else {
+                if (endMarker) map.removeLayer(endMarker);
+                endMarker = L.marker(e.latlng, {icon: redIcon}).addTo(map);
+            }
+            
+            // Clean up
+            map.off('click', mapClickHandler);
+            inputGroup.classList.remove('active-picking');
+            mapClickHandler = null;
+        };
+        
+        // Add the temporary click handler
+        map.on('click', mapClickHandler);
     });
 });
+
 
 // Geolocation for start point
 document.querySelector('.geolocate').addEventListener('click', function() {
