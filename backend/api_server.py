@@ -1,6 +1,7 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 import requests
+import os
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -54,6 +55,25 @@ def get_route():
             "status": "error",
             "message": str(e)
         }), 500
+
+@app.route('/api/poi-data')
+def get_poi_data():
+    try:
+        data_path = os.path.join(os.path.dirname(__file__), 'data', 'siliguri_pois.geojson')
+        
+        if not os.path.exists(data_path):
+            app.logger.error(f"POI file not found at {data_path}")
+            return jsonify({"error": "POI data not found"}), 404
+            
+        return send_file(
+            data_path,
+            mimetype='application/json',
+            as_attachment=False
+        )
+        
+    except Exception as e:
+        app.logger.error(f"POI data error: {str(e)}")
+        return jsonify({"error": "Internal server error"}), 500
 
 if __name__ == '__main__':
     app.run(port=5001, debug=True)

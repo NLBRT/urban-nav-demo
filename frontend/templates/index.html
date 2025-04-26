@@ -5,6 +5,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <!-- Add these AFTER Leaflet but BEFORE your map_scripts.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/1.7.0/gpx.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsSHA/3.2.0/sha.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/1.7.0/gpx.min.js"></script>
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -41,10 +45,85 @@
             <button id="calculate-route" class="action-button" onclick="calculateRoute()">Calculate Route</button>
         </div>
     </div>
+
+    <div class="control-button" id="poi-filter-btn">
+        <button class="main-button"><i class="fas fa-map-marker-alt"></i></button>
+        <div class="control-panel poi-panel">
+            <div class="poi-category-group">
+                <h4>POI Filter</h4>
+
+                <!-- Food & Drinks -->
+                <label class="poi-category">
+                    <input type="checkbox" value="food" 
+                        data-tags='["amenity=restaurant","amenity=cafe","amenity=fast_food"]'>
+                    <i class="fas fa-utensils"></i>
+                    Food &amp; Drinks
+                </label>
+
+                <!-- Public Amenities -->
+                <label class="poi-category">
+                    <input type="checkbox" value="amenities" 
+                        data-tags='["amenity=toilets","amenity=fountain","amenity=bench","amenity=post_box","amenity=waste_basket"]'>
+                    <i class="fas fa-restroom"></i>
+                    Public Amenities
+                </label>
+
+                <!-- Shops -->
+                <label class="poi-category">
+                    <input type="checkbox" value="shops" 
+                        data-tags='["shop=*"]'> <!-- Wildcard syntax -->
+                    <i class="fas fa-shopping-cart"></i>
+                    Shops
+                </label>
+
+                <!-- Healthcare -->
+                <label class="poi-category">
+                    <input type="checkbox" value="healthcare" 
+                        data-tags='["amenity=hospital","amenity=clinic","amenity=pharmacy","amenity=doctors"]'>
+                    <i class="fas fa-hospital"></i>
+                    Healthcare
+                </label>
+
+                <!-- Emergency Services -->
+                <label class="poi-category">
+                    <input type="checkbox" value="emergency" 
+                        data-tags='["amenity=police","amenity=fire_station","emergency=defibrillator"]'>
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Emergency Services
+                </label>
+
+                <!-- Offices -->
+                <label class="poi-category">
+                    <input type="checkbox" value="offices" 
+                        data-tags='["office"]'>
+                    <i class="fas fa-briefcase"></i>
+                    Offices
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- GPX Upload Button -->
+<div class="control-button" id="gpx-upload-btn">
+    <button class="main-button">
+        <i class="fas fa-route"></i>
+        <input type="file" id="gpx-upload" accept=".gpx" hidden>
+    </button>
+    <span class="control-label"></span>
+</div>
+
     <!-- Add other buttons similarly later -->
 </div>
     <div class="map-container">
         <div id="map"></div>
+</div>
+
+    <div id="search-results-panel" class="hidden">
+        <div class="panel-header">
+            <h3>Search Results</h3>
+            <button id="close-panel" class="close-btn">&times;</button>
+        </div>
+        <div id="results-list" class="results-list"></div>
     </div>
 
     <!-- Importing Leaflet -->
